@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"strings"
+	"time"
 )
 
 // request handling func type to replace gin.HandlerFunc
@@ -30,9 +31,16 @@ type RequestConfig struct {
 	Finaliser   ResponseFunc
 }
 
+func injectClock(c *gin.Context) {
+	c.Set("freezedCurrentTime", time.Now().UTC())
+	c.Next()
+}
+
 func RunRequest(rc RequestConfig) {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
+
+	r.Use(injectClock)
 
 	if rc.Middlewares != nil && len(rc.Middlewares) > 0 {
 		for _, mw := range rc.Middlewares {
