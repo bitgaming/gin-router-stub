@@ -1,15 +1,17 @@
 package tests
 
 import (
-	"testing"
 	"net/http/httptest"
-	"bitbucket.org/tedwen/goginhttptest/api"
+	"testing"
+
+	"github.com/bitgaming/gin-router-stub/api"
+	"github.com/gin-gonic/gin"
 )
 
 func TestPostUser(t *testing.T) {
 	data := `{"username":"tedwen"}`
-	RunSimplePost("/login", data,
-		func(c *gin.Context){
+	RunSimplePost("/login", "/login", data,
+		func(c *gin.Context) {
 			api.PostUser(c)
 		},
 		func(r *httptest.ResponseRecorder) {
@@ -20,12 +22,12 @@ func TestPostUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	RunWithMiddlewares("GET", "/login", "",
-		func(c *gin.Context){
+	RunWithMiddlewares("/login", "GET", "/login", "",
+		func(c *gin.Context) {
 			//prepare session
 			api.GetUser(c)
 		},
-		func(r *httptest.ResponseRecorder){
+		func(r *httptest.ResponseRecorder) {
 			t.Logf("r=%+v", r)
 		})
 }

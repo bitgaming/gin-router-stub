@@ -1,0 +1,10 @@
+package: github.com/bitgaming/gin-router-stub
+import:
+- package: github.com/gin-gonic/contrib
+  subpackages:
+  - sessions
+- package: github.com/gin-gonic/gin
+testImport:
+- package: bitbucket.org/tedwen/goginhttptest
+  subpackages:
+  - api
