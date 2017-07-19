@@ -11,14 +11,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-// request handling func type to replace gin.HandlerFunc
+//RequestFunc is request handling func type to replace gin.HandlerFunc
 type RequestFunc func(*gin.Context)
 
-// response handling func type
+//ResponseFunc is response handling func type
 type ResponseFunc func(*httptest.ResponseRecorder)
 
 type RequestConfig struct {
@@ -149,12 +148,12 @@ func RunPostWithMiddlewares(routePath string, path, body string, mws []gin.Handl
 	RunRequest(rc)
 }
 
-func RunWithMiddlewares(routePath string, method, path, body string, handler RequestFunc, reply ResponseFunc) {
+func RunWithMiddlewares(routePath string, method, path, body string, mws []gin.HandlerFunc, handler RequestFunc, reply ResponseFunc) {
 	rc := RequestConfig{
 		Method:      method,
 		RoutePath:   routePath,
 		Path:        path,
-		Middlewares: MiddleWares(),
+		Middlewares: mws,
 		Handler:     handler,
 		Finaliser:   reply,
 	}
@@ -164,13 +163,13 @@ func RunWithMiddlewares(routePath string, method, path, body string, handler Req
 	RunRequest(rc)
 }
 
-func RunWithHeaderMiddlewares(routePath string, method, path, body string, headers map[string]string, handler RequestFunc, reply ResponseFunc) {
+func RunWithHeaderMiddlewares(routePath string, method, path, body string, mws []gin.HandlerFunc, headers map[string]string, handler RequestFunc, reply ResponseFunc) {
 	rc := RequestConfig{
 		Method:      method,
 		RoutePath:   routePath,
 		Path:        path,
 		Headers:     headers,
-		Middlewares: MiddleWares(),
+		Middlewares: mws,
 		Handler:     handler,
 		Finaliser:   reply,
 	}
@@ -178,12 +177,6 @@ func RunWithHeaderMiddlewares(routePath string, method, path, body string, heade
 		rc.Body = body
 	}
 	RunRequest(rc)
-}
-
-func MiddleWares() []gin.HandlerFunc {
-	return []gin.HandlerFunc{
-		sessions.Sessions("session", sessions.NewCookieStore([]byte("12345678"))),
-	}
 }
 
 func VerifyResponse(r *httptest.ResponseRecorder, code int, data map[string]interface{}) (bool, error) {
