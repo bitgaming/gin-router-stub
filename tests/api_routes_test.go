@@ -5,8 +5,15 @@ import (
 	"testing"
 
 	"github.com/bitgaming/gin-router-stub/api"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
+
+func middleWares() []gin.HandlerFunc {
+	return []gin.HandlerFunc{
+		sessions.Sessions("session", sessions.NewCookieStore([]byte("12345678"))),
+	}
+}
 
 func TestPostUser(t *testing.T) {
 	data := `{"username":"tedwen"}`
@@ -22,7 +29,7 @@ func TestPostUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	RunWithMiddlewares("/login", "GET", "/login", "",
+	RunWithMiddlewares("/login", "GET", "/login", "", middleWares(),
 		func(c *gin.Context) {
 			//prepare session
 			api.GetUser(c)
