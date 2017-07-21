@@ -123,6 +123,20 @@ func RunGetWithHeaders(routePath string, path string, headers map[string]string,
 	RunRequest(rc)
 }
 
+func RunPostWithHeaders(routePath string, path string, body string, headers map[string]string, handler RequestFunc, reply ResponseFunc) {
+	rc := RequestConfig{
+		Method:    "POST",
+		Body:      body,
+		RoutePath: routePath,
+		Path:      path,
+		Headers:   headers,
+		Handler:   handler,
+		Finaliser: reply,
+	}
+
+	RunRequest(rc)
+}
+
 func RunGetWithMiddlewares(routePath string, path string, mws []gin.HandlerFunc, handler RequestFunc, reply ResponseFunc) {
 	rc := RequestConfig{
 		Method:      "GET",
